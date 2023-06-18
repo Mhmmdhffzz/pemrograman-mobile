@@ -1,55 +1,47 @@
+
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.novelkomik.Novel
 import com.example.novelkomik.R
-import com.google.android.material.imageview.ShapeableImageView
 
-class NovelAdapter(private val novelLists: ArrayList<Novel>) :
-    RecyclerView.Adapter<NovelAdapter.MyViewHolder>() {
 
-    private lateinit var mListener: OnItemClickListener
+class NovelAdapter(private val itemList: List<Novel>, private val listener: OnItemClickListener) :
+    RecyclerView.Adapter<NovelAdapter.ItemViewHolder>() {
 
     interface OnItemClickListener {
-        fun onItemClick(position: Int)
+        fun onItemClick(item: Novel)
     }
 
-    fun setOnItemClickListener(listener: OnItemClickListener) {
-        mListener = listener
-    }
+    inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val itemImage: ImageView = itemView.findViewById(R.id.itemImage)
+        val itemName: TextView = itemView.findViewById(R.id.itemName)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        val itemView =
-            LayoutInflater.from(parent.context).inflate(R.layout.item, parent, false)
-        return MyViewHolder(itemView, mListener)
-    }
-
-    override fun getItemCount(): Int {
-        return novelLists.size
-    }
-
-    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        val currentItem = novelLists[position]
-        holder.titleImage.setImageResource(currentItem.titleImage)
-        holder.heading.text = currentItem.heading
-        holder.subheading.text = currentItem.subheading
-        holder.detail.text = currentItem.detail
-    }
-
-    inner class MyViewHolder(itemView: View, listener: OnItemClickListener) :
-        RecyclerView.ViewHolder(itemView) {
-
-        val titleImage: ShapeableImageView = itemView.findViewById(R.id.title_image)
-        val heading: TextView = itemView.findViewById(R.id.heading)
-        val subheading: TextView = itemView.findViewById(R.id.subheading)
-        val detail: TextView = itemView.findViewById(R.id.Novel)
 
         init {
             itemView.setOnClickListener {
-                mListener?.onItemClick(adapterPosition)
+                listener.onItemClick(itemList[adapterPosition])
             }
         }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
+        val itemView =
+            LayoutInflater.from(parent.context).inflate(R.layout.item_layout, parent, false)
+        return ItemViewHolder(itemView)
+    }
+
+    override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
+        val currentItem = itemList[position]
+        holder.itemImage.setImageResource(currentItem.image)
+        holder.itemName.text = currentItem.name
+    }
+
+    override fun getItemCount(): Int {
+        return itemList.size
     }
 }
